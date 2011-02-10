@@ -248,6 +248,9 @@ static void timer4_init(void)
 	/* Load registers. */
 	TIM4->EGR = TIM_EGR_UG;
 
+	/* Clear update interrupt flag */
+	TIM4->SR &= ~TIM_SR_UIF:
+
 	/* PWM mode 1, load CCR on update event (enable "Preload regrister"). */
 	TIM4->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE
 	            | TIM_CCMR1_OC2M_2 | TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2PE;
