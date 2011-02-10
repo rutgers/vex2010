@@ -53,7 +53,7 @@ static void pin_setup_output_pp_50(struct pin *p)
 				~((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << sh))
 				| ((GPIO_CRL_MODE0_1 | GPIO_CRL_MODE0_0) << sh);
 	} else {
-		uint8_t sh = 4 * (p->idx - 7);
+		uint8_t sh = 4 * (p->idx - 8);
 		p->gpio->CRH = (p->gpio->CRH &
 				~((GPIO_CRH_MODE8 | GPIO_CRH_CNF8) << sh))
 				| ((GPIO_CRH_MODE8_1 | GPIO_CRH_MODE8_0) << sh);
@@ -72,7 +72,7 @@ static void pin_setup_af_pp_50(struct pin *p)
 				| ((GPIO_CRL_MODE0_1 | GPIO_CRL_MODE0_0
 						| GPIO_CRL_CNF0_1) << sh);
 	} else {
-		uint8_t sh = 4 * (p->idx - 7);
+		uint8_t sh = 4 * (p->idx - 8);
 		p->gpio->CRH = (p->gpio->CRH &
 				~((GPIO_CRH_MODE8 | GPIO_CRH_CNF8) << sh))
 				| ((GPIO_CRH_MODE8_1 | GPIO_CRH_MODE8_0
@@ -167,37 +167,43 @@ static struct motor {
 	{ { {GPIOD, 7}, {GPIOD, 14}, &TIM4->CCR3 }, { {GPIOD, 8}, {GPIOD, 15}, &TIM4->CCR4 } }
 };
 
-#define DEF_MOTOR_SET(x)         \
-void motor##x##_set(int16_t motor_speed) \
-{                                        \
-	if (motor_speed > 0) {               \
-		*(m_data[x].a.ccr) = 0;		\
-		mtr_high_discon(&m_data[x].b);	\
-		mtr_low_discon(&m_data[x].a);	\
-		\
-		udelay_500();                    \
-		\
+#define DEF_MOTOR_SET(x)				\
+void motor##x##_set(int16_t motor_speed)		\
+{							\
+	if (motor_speed > 0) {				\
+		*(m_data[x].a.ccr) = 0;			\
+		mtr_high_discon(&m_data[x].b);		\
+		mtr_low_discon(&m_data[x].a);		\
+							\
+		udelay_500();				\
+		while(!(TIM4->SR & TIM_SR_UIF))		\
+			;				\
+		TIM4->SR &= ~TIM_SR_UIF;		\
+							\
 		*(m_data[x].b.ccr) = motor_speed;	\
-		mtr_high_connect(&m_data[x].a);  \
-		mtr_low_connect(&m_data[x].b);   \
-	} else if (motor_speed < 0) {		\
-		*(m_data[x].b.ccr) = 0;		\
-		mtr_high_discon(&m_data[x].a);   \
-		mtr_low_discon(&m_data[x].b);    \
-		\
-		udelay_500();                    \
-		\
-		*(m_data[x].a.ccr) = -motor_speed; \
-		mtr_high_connect(&m_data[x].b);  \
-		mtr_low_connect(&m_data[x].a);   \
-	} else {                             \
-		mtr_high_discon(&m_data[x].a);   \
-		mtr_high_discon(&m_data[x].b);   \
-		mtr_low_discon(&m_data[x].a);   \
-		mtr_low_discon(&m_data[x].b);   \
-		*(m_data[x].a.ccr) = 0;		\
-		*(m_data[x].b.ccr) = 0;		\
-	}                                    \
+		mtr_high_connect(&m_data[x].a);		\
+		mtr_low_connect(&m_data[x].b);		\
+	} else if (motor_speed < 0) {			\
+		*(m_data[x].b.ccr) = 0;			\
+		mtr_high_discon(&m_data[x].a);		\
+		mtr_low_discon(&m_data[x].b);		\
+							\
+		udelay_500();				\
+		while(!(TIM4->SR & TIM_SR_UIF))		\
+			;				\
+		TIM4->SR &= ~TIM_SR_UIF;		\
+							\
+		*(m_data[x].a.ccr) = -motor_speed;	\
+		mtr_high_connect(&m_data[x].b);		\
+		mtr_low_connect(&m_data[x].a);		\
+	} else {					\
+		mtr_high_discon(&m_data[x].a);		\
+		mtr_high_discon(&m_data[x].b);		\
+		mtr_low_discon(&m_data[x].a);		\
+		mtr_low_discon(&m_data[x].b);		\
+		*(m_data[x].a.ccr) = 0;			\
+		*(m_data[x].b.ccr) = 0;			\
+	}						\
 }
 
 DEF_MOTOR_SET(0);
@@ -216,7 +222,7 @@ static void timer4_init(void)
 	/* Clears the TIM_CR1_CEN bit, disabling timer. Sets the
 	 * center aligned mode to 3: update events on both up and
 	 * down overflows. */
-	TIM4->CR1 = TIM_CR1_CMS_1 | TIM_CR1_CMS_0;
+	TIM4->CR1 = TIM_CR1_CMS_1 | TIM_CR1_CMS_0 | TIM_CR1_ARPE;
 
 	/* Remap TIM4 outputs.
 	 * 0: No remap (TIM4_CH1/PB6, TIM4_CH2/PB7, TIM4_CH3/PB8, TIM4_CH4/PB9)
@@ -238,6 +244,9 @@ static void timer4_init(void)
 	TIM4->CCR2 = 0;
 	TIM4->CCR3 = 0;
 	TIM4->CCR4 = 0;
+
+	/* Load registers. */
+	TIM4->EGR = TIM_EGR_UG;
 
 	/* PWM mode 1, load CCR on update event (enable "Preload regrister"). */
 	TIM4->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE
