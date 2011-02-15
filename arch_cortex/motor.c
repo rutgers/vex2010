@@ -139,7 +139,7 @@ static void mtr_side_set_high(struct mtr_side *ms)
 	mtr_low_discon(ms);
 
 	/* recommended by Corey Chitwood of vex */
-	udelay_500();
+	udelay(500);
 
 	/* connect the high side */
 	mtr_high_connect(ms);
@@ -151,7 +151,7 @@ static void mtr_side_set_low(struct mtr_side *ms)
 	mtr_high_discon(ms);
 
 	/* recommended by Corey Chitwood of vex */
-	udelay_500();
+	udelay(500);
 
 	/* connect the low side */
 	mtr_low_connect(ms);
@@ -175,7 +175,7 @@ void motor##x##_set(int16_t motor_speed)		\
 		mtr_high_discon(&m_data[x].b);		\
 		mtr_low_discon(&m_data[x].a);		\
 							\
-		udelay_500();				\
+		udelay(500);				\
 		while(!(TIM4->SR & TIM_SR_UIF))		\
 			;				\
 		TIM4->SR &= ~TIM_SR_UIF;		\
@@ -188,7 +188,7 @@ void motor##x##_set(int16_t motor_speed)		\
 		mtr_high_discon(&m_data[x].a);		\
 		mtr_low_discon(&m_data[x].b);		\
 							\
-		udelay_500();				\
+		udelay(500);				\
 		while(!(TIM4->SR & TIM_SR_UIF))		\
 			;				\
 		TIM4->SR &= ~TIM_SR_UIF;		\
@@ -249,7 +249,7 @@ static void timer4_init(void)
 	TIM4->EGR = TIM_EGR_UG;
 
 	/* Clear update interrupt flag */
-	TIM4->SR &= ~TIM_SR_UIF:
+	TIM4->SR &= ~TIM_SR_UIF;
 
 	/* PWM mode 1, load CCR on update event (enable "Preload regrister"). */
 	TIM4->CCMR1 = TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE
