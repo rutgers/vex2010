@@ -52,7 +52,7 @@ static ctrl_mode_t mode_s = MODE_AUTON;
 /*
  * INITIALIZATION AND MISC
  */
-void setup_1(void)
+void arch_init_1(void)
 {
 	uint8_t i;
 
@@ -112,12 +112,12 @@ void setup_1(void)
 	}
 }
 
-void setup_2(void)
+void arch_init_2(void)
 {
 	User_Proc_Is_Ready();
 }
 
-void spin(void)
+void arch_spin(void)
 {}
 
 uint8_t battery_get(void)
@@ -233,7 +233,7 @@ static bool check_oi(void)
 ctrl_mode_t ctrl_mode_get(void)
 {
 	if (rxdata.rcstatusflag.b.oi_on) {
-		if (mode_s != MODE_TELOP) {
+		if (mode_s != (uint8_t)MODE_TELOP) {
 			if (check_oi()) {
 				mode_s = MODE_TELOP;
 			}
@@ -343,14 +343,14 @@ bool digital_get(index_t i)
 	/* TODO: OI digitals. */
 
 	default:
-		WARN();
+		WARN_IX(i);
 		return false;
 	}
 }
 
 int8_t oi_group_get(index_t index)
 {
-	if (IX_OI(1,1) <= index && index <= IX_OI(2, CT_OI_GROUP_SZ)) {
+	if (IX_OI_GROUP(1,1) <= index && index <= IX_OI_GROUP(2, CT_OI_GROUP_SZ)) {
 		int8_t v = rxdata.oi_analog[IX_OI_INV(index)] - 128;
 		return (v < 0) ? v + 1 : v;
 	} else {
@@ -412,7 +412,7 @@ uint16_t analog_get(index_t index)
 	}
 }
 
-void analog_set(index_t index, int8_t sp)
+void motor_set(index_t index, int8_t sp)
 {
 	if (IX_MOTOR(1) <= index && index <= IX_MOTOR(CT_MOTOR)) {
 		uint8_t val;
@@ -440,7 +440,7 @@ void interrupt_setup(index_t index, isr_t isr)
 			isr_callbacks[i] = isr;
 		}
 	} else {
-		WARN();
+		WARN_IX(index);
 	}
 }
 
@@ -590,7 +590,7 @@ void interrupt_set(index_t index, bool enable)
 	}
 
 	default:
-		WARN();
+		WARN_IX(index);
 	}
 }
 

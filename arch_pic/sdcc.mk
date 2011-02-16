@@ -16,7 +16,7 @@ ARCH_CFLAGS += --optimize-cmp
 ARCH_CFLAGS += --optimize-df
 #ARCH_CFLAGS += --pstack-model=large
 
-ARCH_LDFLAGS = -Wl,-s,/$(ARCHDIR)/18f8520user_sdcc.lkr $(ARCH_CFLAGS)
+ARCH_LDFLAGS = -Wl,-s,$(ARCHDIR)/18f8520user_sdcc.lkr $(ARCH_CFLAGS)
 ARCH_ASFLAGS = -p18f8520
 
 OBJECTS = $(SOURCE:=.o)
