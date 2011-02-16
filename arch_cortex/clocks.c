@@ -20,7 +20,8 @@ static int treg_max;
 static volatile uint64_t jiffies;
 
 #define treg_to_us(treg) ((treg_max - (treg)) / treg_div)
-#define jiffies_to_ms(jiffies) (jiffies)
+#define jiffies_to_ms(jiffies) (jiffies / 1000)
+#define jiffies_to_us(jiffies) (jiffies)
 
 
 uint64_t time_get_ms(void)
@@ -37,7 +38,7 @@ uint16_t time_get_only_us(void)
 /* this seems like it would be slightly inefficient in some cases */
 uint64_t time_get_us(void)
 {
-	return jiffies_to_ms(jiffies) * 1000 | treg_to_us(SysTick->VAL);
+	return jiffies_to_us(jiffies) | treg_to_us(SysTick->VAL);
 }
 
 /* acuracy is +- the size of systick's prescaled clock speed with sub us
@@ -54,7 +55,7 @@ void udelay(uint32_t delay) {
 __attribute__((interrupt))
 void SysTick_Handler(void)
 {
-	jiffies++;
+	jiffies+=1000;
 }
 
 /**
