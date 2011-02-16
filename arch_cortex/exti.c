@@ -62,11 +62,12 @@ void interrupt_set(index_t index, bool enable)
 		return;
 	}
 
+	uint8_t rpin = ifipin_to_pin[pin];
 	if (enable) {
-		digital_setup(ifipin_to_pin[pin], false);
-		EXTI->IMR  |=  (1 << pin); /* enable interrupt */
+		digital_setup(index, false);
+		EXTI->IMR  |=  (1 << rpin); /* enable interrupt */
 	} else {
-		EXTI->IMR  &= ~(1 << pin); /* disable interrupt */
+		EXTI->IMR  &= ~(1 << rpin); /* disable interrupt */
 	}
 }
 
