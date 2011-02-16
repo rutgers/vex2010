@@ -156,7 +156,7 @@ uint8_t battery_get(void)
 	}
 }
 
-void loop_1(void)
+void arch_loop_1(void)
 {
 	Getdata(&rxdata);
 
@@ -194,12 +194,12 @@ void loop_1(void)
 #endif
 }
 
-void loop_2(void)
+void arch_loop_2(void)
 {
 	Putdata(&txdata);
 }
 
-bool new_data_received(void)
+bool do_slow_loop(void)
 {
 	return statusflag.b.NEW_SPI_DATA;
 }

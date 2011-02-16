@@ -19,18 +19,18 @@
 ;
 COPY_VAR        udata   0x80
 
-	global  gTX_BUFF0,gTX_BUFF1,gRX_BUFF0,gRX_BUFF1
+	global  _gTX_BUFF0,_gTX_BUFF1,_gRX_BUFF0,_gRX_BUFF1
 
-gTX_BUFF0       res     32
-gTX_BUFF1       res     32
-gRX_BUFF0       res     32
-gRX_BUFF1       res     32
+_gTX_BUFF0       res     32
+_gTX_BUFF1       res     32
+_gRX_BUFF0       res     32
+_gRX_BUFF1       res     32
 ;
 ;
 ;
 SPI_VAR         udata_acs
 
-	global  gSPI_RCV_PTR,gSPI_XMT_PTR,PWMdisableMask
+	global  gSPI_RCV_PTR,gSPI_XMT_PTR,_PWMdisableMask
 
 gTX_PTRH        res     1
 gTX_PTRL        res     1
@@ -54,19 +54,19 @@ PORT_TRASH      res     1
 Cnt             res     1
 Cnt1            res     1
 txPWM_MASK      res     1
-PWMdisableMask  res     1
+_PWMdisableMask  res     1
 ;
 ;
 ;
 UTIL_LIB        code
 
-	extern  usart1_busywait,_statusflag
+	extern  _usart1_busywait,_statusflag
 
 	global  Clear_Memory
 	global  Hex_output
-	global  UpdateLocalPWMDirection
-	global  SendDataToMaster
-	global  GetDataFromMaster
+	global  _UpdateLocalPWMDirection
+	global  _SendDataToMaster
+	global  _GetDataFromMaster
 	global  Generate_Pwms
 
 ;*****************************************************************************
@@ -104,7 +104,7 @@ Hex_output
 	addlw   0x7
 	addlw   0x2a
 	movwf   TXREG1
-	call   	usart1_busywait 
+	call   	_usart1_busywait 
 
 	movf    tmp, w
 	andlw   0x0f
@@ -113,13 +113,13 @@ Hex_output
 	addlw   0x7
 	addlw   0x2a
 	movwf   TXREG1
-	call    usart1_busywait
+	call    _usart1_busywait
 
 	retlw   0
 
 ;*****************************************************************************
 ;*****************************************************************************
-UpdateLocalPWMDirection
+_UpdateLocalPWMDirection
 	movlw   0xff
 	movff   PLUSW1, txPWM_MASK
 	btfsc   txPWM_MASK, 0
@@ -158,7 +158,7 @@ UpdateLocalPWMDirection
 
 ;*****************************************************************************
 ;*****************************************************************************
-SendDataToMaster
+_SendDataToMaster
 	movff   FSR0H, FSRH_temp
 	movff   FSR0L, FSRL_temp
 	movlw   0xff
@@ -168,73 +168,73 @@ SendDataToMaster
 	btfss   _statusflag, 3
 	bra     MoveData4Buff0
 
-	movff   POSTINC0, gTX_BUFF1+0
-	movff   POSTINC0, gTX_BUFF1+1
-	movff   POSTINC0, gTX_BUFF1+2
-	movff   POSTINC0, gTX_BUFF1+3
-	movff   POSTINC0, gTX_BUFF1+4
-	movff   POSTINC0, gTX_BUFF1+5
-	movff   POSTINC0, gTX_BUFF1+6
-	movff   POSTINC0, gTX_BUFF1+7
-	movff   POSTINC0, gTX_BUFF1+8
-	movff   POSTINC0, gTX_BUFF1+9
-	movff   POSTINC0, gTX_BUFF1+10
-	movff   POSTINC0, gTX_BUFF1+11
-	movff   POSTINC0, gTX_BUFF1+12
-	movff   POSTINC0, gTX_BUFF1+13
-	movff   POSTINC0, gTX_BUFF1+14
-	movff   POSTINC0, gTX_BUFF1+15
-	movff   POSTINC0, gTX_BUFF1+16
-	movff   POSTINC0, gTX_BUFF1+17
-	movff   POSTINC0, gTX_BUFF1+18
-	movff   POSTINC0, gTX_BUFF1+19
-	movff   POSTINC0, gTX_BUFF1+20
-	movff   POSTINC0, gTX_BUFF1+21
-	movff   POSTINC0, gTX_BUFF1+22
-	movff   POSTINC0, gTX_BUFF1+23
-	movff   POSTINC0, gTX_BUFF1+24
-	movff   POSTINC0, gTX_BUFF1+25
-	movff   POSTINC0, gTX_BUFF1+26
-	movff   POSTINC0, gTX_BUFF1+27
-	movff   POSTINC0, gTX_BUFF1+28
-	movff   POSTINC0, gTX_BUFF1+29
-	movff   POSTINC0, gTX_BUFF1+30
-	movff   POSTINC0, gTX_BUFF1+31
+	movff   POSTINC0, _gTX_BUFF1+0
+	movff   POSTINC0, _gTX_BUFF1+1
+	movff   POSTINC0, _gTX_BUFF1+2
+	movff   POSTINC0, _gTX_BUFF1+3
+	movff   POSTINC0, _gTX_BUFF1+4
+	movff   POSTINC0, _gTX_BUFF1+5
+	movff   POSTINC0, _gTX_BUFF1+6
+	movff   POSTINC0, _gTX_BUFF1+7
+	movff   POSTINC0, _gTX_BUFF1+8
+	movff   POSTINC0, _gTX_BUFF1+9
+	movff   POSTINC0, _gTX_BUFF1+10
+	movff   POSTINC0, _gTX_BUFF1+11
+	movff   POSTINC0, _gTX_BUFF1+12
+	movff   POSTINC0, _gTX_BUFF1+13
+	movff   POSTINC0, _gTX_BUFF1+14
+	movff   POSTINC0, _gTX_BUFF1+15
+	movff   POSTINC0, _gTX_BUFF1+16
+	movff   POSTINC0, _gTX_BUFF1+17
+	movff   POSTINC0, _gTX_BUFF1+18
+	movff   POSTINC0, _gTX_BUFF1+19
+	movff   POSTINC0, _gTX_BUFF1+20
+	movff   POSTINC0, _gTX_BUFF1+21
+	movff   POSTINC0, _gTX_BUFF1+22
+	movff   POSTINC0, _gTX_BUFF1+23
+	movff   POSTINC0, _gTX_BUFF1+24
+	movff   POSTINC0, _gTX_BUFF1+25
+	movff   POSTINC0, _gTX_BUFF1+26
+	movff   POSTINC0, _gTX_BUFF1+27
+	movff   POSTINC0, _gTX_BUFF1+28
+	movff   POSTINC0, _gTX_BUFF1+29
+	movff   POSTINC0, _gTX_BUFF1+30
+	movff   POSTINC0, _gTX_BUFF1+31
 	bra     TerminateSend
 
 MoveData4Buff0
-	movff   POSTINC0, gTX_BUFF0+0
-	movff   POSTINC0, gTX_BUFF0+1
-	movff   POSTINC0, gTX_BUFF0+2
-	movff   POSTINC0, gTX_BUFF0+3
-	movff   POSTINC0, gTX_BUFF0+4
-	movff   POSTINC0, gTX_BUFF0+5
-	movff   POSTINC0, gTX_BUFF0+6
-	movff   POSTINC0, gTX_BUFF0+7
-	movff   POSTINC0, gTX_BUFF0+8
-	movff   POSTINC0, gTX_BUFF0+9
-	movff   POSTINC0, gTX_BUFF0+10
-	movff   POSTINC0, gTX_BUFF0+11
-	movff   POSTINC0, gTX_BUFF0+12
-	movff   POSTINC0, gTX_BUFF0+13
-	movff   POSTINC0, gTX_BUFF0+14
-	movff   POSTINC0, gTX_BUFF0+15
-	movff   POSTINC0, gTX_BUFF0+16
-	movff   POSTINC0, gTX_BUFF0+17
-	movff   POSTINC0, gTX_BUFF0+18
-	movff   POSTINC0, gTX_BUFF0+19
-	movff   POSTINC0, gTX_BUFF0+20
-	movff   POSTINC0, gTX_BUFF0+21
-	movff   POSTINC0, gTX_BUFF0+22
-	movff   POSTINC0, gTX_BUFF0+23
-	movff   POSTINC0, gTX_BUFF0+24
-	movff   POSTINC0, gTX_BUFF0+25
-	movff   POSTINC0, gTX_BUFF0+26
-	movff   POSTINC0, gTX_BUFF0+27
-	movff   POSTINC0, gTX_BUFF0+28
-	movff   POSTINC0, gTX_BUFF0+29
-	movff   POSTINC0, gTX_BUFF0+30
-	movff   POSTINC0, gTX_BUFF0+31
+	movff   POSTINC0, _gTX_BUFF0+0
+	movff   POSTINC0, _gTX_BUFF0+1
+	movff   POSTINC0, _gTX_BUFF0+2
+	movff   POSTINC0, _gTX_BUFF0+3
+	movff   POSTINC0, _gTX_BUFF0+4
+	movff   POSTINC0, _gTX_BUFF0+5
+	movff   POSTINC0, _gTX_BUFF0+6
+	movff   POSTINC0, _gTX_BUFF0+7
+	movff   POSTINC0, _gTX_BUFF0+8
+	movff   POSTINC0, _gTX_BUFF0+9
+	movff   POSTINC0, _gTX_BUFF0+10
+	movff   POSTINC0, _gTX_BUFF0+11
+	movff   POSTINC0, _gTX_BUFF0+12
+	movff   POSTINC0, _gTX_BUFF0+13
+	movff   POSTINC0, _gTX_BUFF0+14
+	movff   POSTINC0, _gTX_BUFF0+15
+	movff   POSTINC0, _gTX_BUFF0+16
+	movff   POSTINC0, _gTX_BUFF0+17
+	movff   POSTINC0, _gTX_BUFF0+18
+	movff   POSTINC0, _gTX_BUFF0+19
+	movff   POSTINC0, _gTX_BUFF0+20
+	movff   POSTINC0, _gTX_BUFF0+21
+	movff   POSTINC0, _gTX_BUFF0+22
+	movff   POSTINC0, _gTX_BUFF0+23
+	movff   POSTINC0, _gTX_BUFF0+24
+	movff   POSTINC0, _gTX_BUFF0+25
+	movff   POSTINC0, _gTX_BUFF0+26
+	movff   POSTINC0, _gTX_BUFF0+27
+	movff   POSTINC0, _gTX_BUFF0+28
+	movff   POSTINC0, _gTX_BUFF0+29
+	movff   POSTINC0, _gTX_BUFF0+30
+	movff   POSTINC0, _gTX_BUFF0+31
 
 TerminateSend
 	movff   FSRH_temp, FSR0H
@@ -243,7 +243,7 @@ TerminateSend
 
 ;*****************************************************************************
 ;*****************************************************************************
-GetDataFromMaster
+_GetDataFromMaster
 	btfss   _statusflag, 0
 	return
 
@@ -255,73 +255,73 @@ GetDataFromMaster
 	movff   PLUSW1, FSR0L
 	btfss   _statusflag, 4
 	bra     MoveDataFromBuff1
-	movff   gRX_BUFF0+0, POSTINC0
-	movff   gRX_BUFF0+1, POSTINC0
-	movff   gRX_BUFF0+2, POSTINC0
-	movff   gRX_BUFF0+3, POSTINC0
-	movff   gRX_BUFF0+4, POSTINC0
-	movff   gRX_BUFF0+5, POSTINC0
-	movff   gRX_BUFF0+6, POSTINC0
-	movff   gRX_BUFF0+7, POSTINC0
-	movff   gRX_BUFF0+8, POSTINC0
-	movff   gRX_BUFF0+9, POSTINC0
-	movff   gRX_BUFF0+10, POSTINC0
-	movff   gRX_BUFF0+11, POSTINC0
-	movff   gRX_BUFF0+12, POSTINC0
-	movff   gRX_BUFF0+13, POSTINC0
-	movff   gRX_BUFF0+14, POSTINC0
-	movff   gRX_BUFF0+15, POSTINC0
-	movff   gRX_BUFF0+16, POSTINC0
-	movff   gRX_BUFF0+17, POSTINC0
-	movff   gRX_BUFF0+18, POSTINC0
-	movff   gRX_BUFF0+19, POSTINC0
-	movff   gRX_BUFF0+20, POSTINC0
-	movff   gRX_BUFF0+21, POSTINC0
-	movff   gRX_BUFF0+22, POSTINC0
-	movff   gRX_BUFF0+23, POSTINC0
-	movff   gRX_BUFF0+24, POSTINC0
-	movff   gRX_BUFF0+25, POSTINC0
-	movff   gRX_BUFF0+26, POSTINC0
-	movff   gRX_BUFF0+27, POSTINC0
-	movff   gRX_BUFF0+28, POSTINC0
-	movff   gRX_BUFF0+29, POSTINC0
-	movff   gRX_BUFF0+30, POSTINC0
-	movff   gRX_BUFF0+31, POSTINC0
+	movff   _gRX_BUFF0+0, POSTINC0
+	movff   _gRX_BUFF0+1, POSTINC0
+	movff   _gRX_BUFF0+2, POSTINC0
+	movff   _gRX_BUFF0+3, POSTINC0
+	movff   _gRX_BUFF0+4, POSTINC0
+	movff   _gRX_BUFF0+5, POSTINC0
+	movff   _gRX_BUFF0+6, POSTINC0
+	movff   _gRX_BUFF0+7, POSTINC0
+	movff   _gRX_BUFF0+8, POSTINC0
+	movff   _gRX_BUFF0+9, POSTINC0
+	movff   _gRX_BUFF0+10, POSTINC0
+	movff   _gRX_BUFF0+11, POSTINC0
+	movff   _gRX_BUFF0+12, POSTINC0
+	movff   _gRX_BUFF0+13, POSTINC0
+	movff   _gRX_BUFF0+14, POSTINC0
+	movff   _gRX_BUFF0+15, POSTINC0
+	movff   _gRX_BUFF0+16, POSTINC0
+	movff   _gRX_BUFF0+17, POSTINC0
+	movff   _gRX_BUFF0+18, POSTINC0
+	movff   _gRX_BUFF0+19, POSTINC0
+	movff   _gRX_BUFF0+20, POSTINC0
+	movff   _gRX_BUFF0+21, POSTINC0
+	movff   _gRX_BUFF0+22, POSTINC0
+	movff   _gRX_BUFF0+23, POSTINC0
+	movff   _gRX_BUFF0+24, POSTINC0
+	movff   _gRX_BUFF0+25, POSTINC0
+	movff   _gRX_BUFF0+26, POSTINC0
+	movff   _gRX_BUFF0+27, POSTINC0
+	movff   _gRX_BUFF0+28, POSTINC0
+	movff   _gRX_BUFF0+29, POSTINC0
+	movff   _gRX_BUFF0+30, POSTINC0
+	movff   _gRX_BUFF0+31, POSTINC0
 	bra     TerminateGet
 
 MoveDataFromBuff1
-	movff   gRX_BUFF1+0, POSTINC0
-	movff   gRX_BUFF1+1, POSTINC0
-	movff   gRX_BUFF1+2, POSTINC0
-	movff   gRX_BUFF1+3, POSTINC0
-	movff   gRX_BUFF1+4, POSTINC0
-	movff   gRX_BUFF1+5, POSTINC0
-	movff   gRX_BUFF1+6, POSTINC0
-	movff   gRX_BUFF1+7, POSTINC0
-	movff   gRX_BUFF1+8, POSTINC0
-	movff   gRX_BUFF1+9, POSTINC0
-	movff   gRX_BUFF1+10, POSTINC0
-	movff   gRX_BUFF1+11, POSTINC0
-	movff   gRX_BUFF1+12, POSTINC0
-	movff   gRX_BUFF1+13, POSTINC0
-	movff   gRX_BUFF1+14, POSTINC0
-	movff   gRX_BUFF1+15, POSTINC0
-	movff   gRX_BUFF1+16, POSTINC0
-	movff   gRX_BUFF1+17, POSTINC0
-	movff   gRX_BUFF1+18, POSTINC0
-	movff   gRX_BUFF1+19, POSTINC0
-	movff   gRX_BUFF1+20, POSTINC0
-	movff   gRX_BUFF1+21, POSTINC0
-	movff   gRX_BUFF1+22, POSTINC0
-	movff   gRX_BUFF1+23, POSTINC0
-	movff   gRX_BUFF1+24, POSTINC0
-	movff   gRX_BUFF1+25, POSTINC0
-	movff   gRX_BUFF1+26, POSTINC0
-	movff   gRX_BUFF1+27, POSTINC0
-	movff   gRX_BUFF1+28, POSTINC0
-	movff   gRX_BUFF1+29, POSTINC0
-	movff   gRX_BUFF1+30, POSTINC0
-	movff   gRX_BUFF1+31, POSTINC0
+	movff   _gRX_BUFF1+0, POSTINC0
+	movff   _gRX_BUFF1+1, POSTINC0
+	movff   _gRX_BUFF1+2, POSTINC0
+	movff   _gRX_BUFF1+3, POSTINC0
+	movff   _gRX_BUFF1+4, POSTINC0
+	movff   _gRX_BUFF1+5, POSTINC0
+	movff   _gRX_BUFF1+6, POSTINC0
+	movff   _gRX_BUFF1+7, POSTINC0
+	movff   _gRX_BUFF1+8, POSTINC0
+	movff   _gRX_BUFF1+9, POSTINC0
+	movff   _gRX_BUFF1+10, POSTINC0
+	movff   _gRX_BUFF1+11, POSTINC0
+	movff   _gRX_BUFF1+12, POSTINC0
+	movff   _gRX_BUFF1+13, POSTINC0
+	movff   _gRX_BUFF1+14, POSTINC0
+	movff   _gRX_BUFF1+15, POSTINC0
+	movff   _gRX_BUFF1+16, POSTINC0
+	movff   _gRX_BUFF1+17, POSTINC0
+	movff   _gRX_BUFF1+18, POSTINC0
+	movff   _gRX_BUFF1+19, POSTINC0
+	movff   _gRX_BUFF1+20, POSTINC0
+	movff   _gRX_BUFF1+21, POSTINC0
+	movff   _gRX_BUFF1+22, POSTINC0
+	movff   _gRX_BUFF1+23, POSTINC0
+	movff   _gRX_BUFF1+24, POSTINC0
+	movff   _gRX_BUFF1+25, POSTINC0
+	movff   _gRX_BUFF1+26, POSTINC0
+	movff   _gRX_BUFF1+27, POSTINC0
+	movff   _gRX_BUFF1+28, POSTINC0
+	movff   _gRX_BUFF1+29, POSTINC0
+	movff   _gRX_BUFF1+30, POSTINC0
+	movff   _gRX_BUFF1+31, POSTINC0
 TerminateGet
 	movff   FSRH_temp, FSR0H
 	movff   FSRL_temp, FSR0L
@@ -334,7 +334,7 @@ Generate_Pwms
 	btfsc   INTCON,TMR0IF
 	return
 #endif
-	movf    PWMdisableMask, w
+	movf    _PWMdisableMask, w
 	xorlw   0x0f
 	btfsc   STATUS, Z
 	return
@@ -349,19 +349,19 @@ Generate_Pwms
 	movff   PLUSW1, gPWM_DATA4
 
 	incf    gPWM_DATA1, f
-	btfss   PWMdisableMask, 0
+	btfss   _PWMdisableMask, 0
 	bsf     LATE, LATE7
 
 	incf    gPWM_DATA2, f
-	btfss   PWMdisableMask, 1
+	btfss   _PWMdisableMask, 1
 	bsf     LATG, LATG0
 
 	incf    gPWM_DATA3, f
-	btfss   PWMdisableMask, 2
+	btfss   _PWMdisableMask, 2
 	bsf     LATG, LATG3
 
 	incf    gPWM_DATA4, f
-	btfss   PWMdisableMask, 3
+	btfss   _PWMdisableMask, 3
 	bsf     LATG, LATG4
 
 	movlw   0xfb
@@ -390,26 +390,26 @@ Generate_Pwms_Cont
 LP4
 	decfsz  gPWM_DATA1, f
 	goto    LP4_Cont1
-	btfss   PWMdisableMask, 0
+	btfss   _PWMdisableMask, 0
 	bcf     LATE, LATE7
 
 LP4_Cont1
 	decfsz  gPWM_DATA2, f
 	goto    LP4_Cont2
-	btfss   PWMdisableMask, 1
+	btfss   _PWMdisableMask, 1
 	bcf     LATG, LATG0
 
 LP4_Cont2
 	decfsz  gPWM_DATA3, f
 	goto    LP4_Cont3
-	btfss   PWMdisableMask, 2
+	btfss   _PWMdisableMask, 2
 	bcf     LATG, LATG3
 
 LP4_Cont3
 	nop
 	decfsz  gPWM_DATA4, f
 	goto    LP4_Cont4
-	btfss   PWMdisableMask, 3
+	btfss   _PWMdisableMask, 3
 	bcf     LATG, LATG4
 
 LP4_Cont4
