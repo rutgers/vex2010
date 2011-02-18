@@ -1,0 +1,3 @@
+[submodule "hax"]
+	path = hax
+	url = git@github.com:mkoval/hax.git
