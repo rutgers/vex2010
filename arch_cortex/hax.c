@@ -29,6 +29,8 @@ void arch_init_1(void) {
 	adc_init();
 	exti_init();
 
+	//motors_init();
+
 	memset(&u2m, 0, sizeof u2m);
 	memset(&m2u, 0, sizeof m2u);
 
@@ -36,13 +38,6 @@ void arch_init_1(void) {
 	spi_packet_init_m2u(&m2u.m2u);
 
 	puts("# VERSION " VERSION);
-}
-
-void arch_init_2(void) {
-	while(!is_master_ready());
-}
-
-void arch_spin(void) {
 }
 
 static uint64_t spi_last_time_ms;
@@ -62,6 +57,17 @@ bool do_slow_loop(void) {
 	} else {
 		return false;
 	}
+}
+
+void arch_init_2(void) {
+	while(!is_master_ready()) {
+		if (do_slow_loop()) {
+			arch_loop_1();
+		}
+	}
+}
+
+void arch_spin(void) {
 }
 
 ctrl_mode_t ctrl_mode_get(void) {
@@ -99,7 +105,14 @@ void motor_set(index_t index, int8_t value) {
 	value2 = value + 128;
 
 	if (index == IX_MOTOR(1) || index == IX_MOTOR(10)) {
-		WARN("native two-wire motors are unsupported");
+		WARN("index %d; value %d; two-wire motor", index, value);
+#if 0
+		if (index == IX_MOTOR(1)) {
+			motor0_set((int16_t)value << 8);
+		} else {
+			motor1_set((int16_t)value << 8);
+		}
+#endif
 	} else if (IX_MOTOR(2) <= index && index <= IX_MOTOR(9)) {
 		u2m.u2m.motors[index - IX_MOTOR(2)] = value2;
 	} else {

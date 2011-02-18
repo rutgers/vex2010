@@ -31,15 +31,6 @@ static isr_t isr_callback[12];
 #define INT_VALID(pin) (DIG_VALID(pin) && (pin != 9))
 
 /* HAX interrupt code */
-void interrupt_reg_isr(index_t index, isr_t isr) {
-	index_t pin = index - IX_DIGITAL(1);
-	if (!INT_VALID(pin)) {
-		WARN_IX(index);
-		return;
-	}
-	isr_callback[pin] = isr;
-}
-
 void interrupt_setup(index_t index, isr_t isr)
 {
 	index_t pin = index - IX_DIGITAL(1);
@@ -48,10 +39,14 @@ void interrupt_setup(index_t index, isr_t isr)
 		return;
 	}
 
+	uint8_t rpin = ifipin_to_pin[pin];
+
+	EXTI->IMR  &= ~(1 << rpin); /* disable interrupt */
 	isr_callback[index] = isr;
-	EXTI->EMR   &= ~(1 << pin); /* disable event request */
-	EXTI->RTSR  |=  (1 << pin); /* enable rising edge trigger */
-	EXTI->FTSR  |=  (1 << pin); /* enable falling edge trigger */
+	EXTI->EMR   &= ~(1 << rpin); /* disable event request */
+	EXTI->RTSR  |=  (1 << rpin); /* enable rising edge trigger */
+	EXTI->FTSR  |=  (1 << rpin); /* enable falling edge trigger */
+	digital_setup(index, false);
 }
 
 void interrupt_set(index_t index, bool enable)
@@ -62,11 +57,11 @@ void interrupt_set(index_t index, bool enable)
 		return;
 	}
 
+	uint8_t rpin = ifipin_to_pin[pin];
 	if (enable) {
-		digital_setup(ifipin_to_pin[pin], false);
-		EXTI->IMR  |=  (1 << pin); /* enable interrupt */
+		EXTI->IMR  |=  (1 << rpin); /* enable interrupt */
 	} else {
-		EXTI->IMR  &= ~(1 << pin); /* disable interrupt */
+		EXTI->IMR  &= ~(1 << rpin); /* disable interrupt */
 	}
 }
 
